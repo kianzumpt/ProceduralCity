@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://bpoxetobe2kju"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2hmot"]
+size = Vector2(1000, 1000)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ttusx"]
+albedo_color = Color(0.166374, 0.166374, 0.166374, 1)
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_kmxsr"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_pjrlv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hmr03"]
+albedo_color = Color(0.615686, 0, 0, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_txbdg"]
+
+[node name="root" type="Node3D"]
+
+[node name="sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0.707107, -0.5, 0.5, 0, 10, 0)
+
+[node name="ground" type="StaticBody3D" parent="."]
+
+[node name="mesh_instance" type="MeshInstance3D" parent="ground"]
+mesh = SubResource("PlaneMesh_2hmot")
+surface_material_override/0 = SubResource("StandardMaterial3D_ttusx")
+
+[node name="collision_shape" type="CollisionShape3D" parent="ground"]
+shape = SubResource("WorldBoundaryShape3D_kmxsr")
+
+[node name="greg_the_cube" type="StaticBody3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 6.07874, 0.5, 4.25297)
+metadata/_edit_group_ = true
+
+[node name="mesh_instance" type="MeshInstance3D" parent="greg_the_cube"]
+mesh = SubResource("BoxMesh_pjrlv")
+surface_material_override/0 = SubResource("StandardMaterial3D_hmr03")
+
+[node name="collision_shape" type="CollisionShape3D" parent="greg_the_cube"]
+shape = SubResource("BoxShape3D_txbdg")
+
+[node name="camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 15)
