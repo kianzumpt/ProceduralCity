@@ -1,0 +1,81 @@
+[gd_scene load_steps=9 format=3 uid="uid://bsccrtnklob3i"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_06ffu"]
+size = Vector3(1, 1.5, 0.5)
+
+[sub_resource type="SphereMesh" id="SphereMesh_0p575"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_pu24x"]
+radius = 0.25
+height = 0.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_dbx2s"]
+size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_p8y5b"]
+top_radius = 0.25
+bottom_radius = 0.25
+height = 0.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_caym0"]
+size = Vector3(0.5, 1, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_i1n2g"]
+size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6q2ux"]
+size = Vector3(0.5, 1.5, 0.5)
+
+[node name="procedural_animation" type="Node3D"]
+
+[node name="character" type="Node3D" parent="."]
+
+[node name="torso_mesh_insatnce" type="MeshInstance3D" parent="character"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.25, 0)
+mesh = SubResource("BoxMesh_06ffu")
+skeleton = NodePath("head_mesh_instance")
+
+[node name="head_mesh_instance" type="MeshInstance3D" parent="character/torso_mesh_insatnce"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.25)
+mesh = SubResource("SphereMesh_0p575")
+skeleton = NodePath("../..")
+
+[node name="left_shoulder_mesh_instance" type="MeshInstance3D" parent="character/torso_mesh_insatnce"]
+transform = Transform3D(0.868034, -0.496504, 0, 0.496504, 0.868034, 0, 0, 0, 1, 0.75, 0.5, 0)
+mesh = SubResource("SphereMesh_pu24x")
+skeleton = NodePath("../..")
+
+[node name="left_upper_arm_mesh_instance" type="MeshInstance3D" parent="character/torso_mesh_insatnce/left_shoulder_mesh_instance"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+mesh = SubResource("BoxMesh_dbx2s")
+skeleton = NodePath("../../..")
+
+[node name="left_elbow_mesh_instance" type="MeshInstance3D" parent="character/torso_mesh_insatnce/left_shoulder_mesh_instance"]
+transform = Transform3D(0, -1, -2.98023e-08, 0.672121, -2.98023e-08, 0.740441, -0.740441, -1.98078e-08, 0.672121, 5.96046e-08, -1, 0)
+mesh = SubResource("CylinderMesh_p8y5b")
+skeleton = NodePath("../../..")
+
+[node name="right_lower_arm_mesh_instance" type="MeshInstance3D" parent="character/torso_mesh_insatnce/left_shoulder_mesh_instance/left_elbow_mesh_instance"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -0.785114, 5.96046e-08, 0)
+mesh = SubResource("BoxMesh_caym0")
+skeleton = NodePath("../../../..")
+
+[node name="left_hip_mesh_instance" type="MeshInstance3D" parent="character/torso_mesh_insatnce"]
+transform = Transform3D(0.968034, -0.250819, -7.45058e-09, 0.2217, 0.85565, 0.467668, -0.1173, -0.452718, 0.883905, 0.25, -1, 0)
+mesh = SubResource("SphereMesh_pu24x")
+skeleton = NodePath("../..")
+
+[node name="right_upper_leg_mesh_instance" type="MeshInstance3D" parent="character/torso_mesh_insatnce/left_hip_mesh_instance"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+mesh = SubResource("BoxMesh_i1n2g")
+skeleton = NodePath("../../..")
+
+[node name="left_knee_mesh_instance" type="MeshInstance3D" parent="character/torso_mesh_insatnce/left_hip_mesh_instance"]
+transform = Transform3D(-1.45692e-08, -1, 5.44394e-08, 0.542339, -3.64396e-08, -0.84016, 0.84016, 1.53501e-08, 0.542339, -2.98023e-08, -1, 0)
+mesh = SubResource("CylinderMesh_p8y5b")
+skeleton = NodePath("../../..")
+
+[node name="right_lower_leg_mesh_instance" type="MeshInstance3D" parent="character/torso_mesh_insatnce/left_hip_mesh_instance/left_knee_mesh_instance"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -1, 2.98023e-08, 0)
+mesh = SubResource("BoxMesh_6q2ux")
+skeleton = NodePath("../../../..")
