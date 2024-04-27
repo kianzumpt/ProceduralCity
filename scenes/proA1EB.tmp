@@ -30,7 +30,6 @@ size = Vector3(0.25, 0.5, 0.125)
 
 [node name="sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0.707107, -0.5, 0.5, 0, 10, 0)
-shadow_enabled = true
 
 [node name="ground" type="StaticBody3D" parent="."]
 
@@ -54,14 +53,13 @@ shape = SubResource("BoxShape3D_txbdg")
 
 [node name="character" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-wall_min_slide_angle = 0.0
 script = ExtResource("1_faoee")
 metadata/_edit_group_ = true
 
 [node name="mesh" type="Node3D" parent="character"]
 
 [node name="head" type="MeshInstance3D" parent="character/mesh"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, -0.063)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, -1.063)
 mesh = SubResource("SphereMesh_rwdhx")
 skeleton = NodePath("../..")
 
