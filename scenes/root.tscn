@@ -1,4 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://bpoxetobe2kju"]
+[gd_scene load_steps=10 format=3 uid="uid://bpoxetobe2kju"]
+
+[ext_resource type="Script" path="res://scenes/CharacterBody3D.gd" id="1_pbc1b"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2hmot"]
 size = Vector2(1000, 1000)
@@ -14,6 +16,10 @@ albedo_color = Color(0.166374, 0.166374, 0.166374, 1)
 albedo_color = Color(0.615686, 0, 0, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_txbdg"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_w3vug"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ujx7p"]
 
 [node name="root" type="Node3D"]
 
@@ -31,7 +37,6 @@ shape = SubResource("WorldBoundaryShape3D_kmxsr")
 
 [node name="greg_the_cube" type="StaticBody3D" parent="."]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 6.07874, 0.5, 4.25297)
-metadata/_edit_group_ = true
 
 [node name="mesh_instance" type="MeshInstance3D" parent="greg_the_cube"]
 mesh = SubResource("BoxMesh_pjrlv")
@@ -42,3 +47,13 @@ shape = SubResource("BoxShape3D_txbdg")
 
 [node name="camera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 15)
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.985369, 0)
+script = ExtResource("1_pbc1b")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("CapsuleShape3D_w3vug")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D/CollisionShape3D"]
+mesh = SubResource("CapsuleMesh_ujx7p")
