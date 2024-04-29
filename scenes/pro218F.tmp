@@ -17,16 +17,16 @@ albedo_color = Color(0.615686, 0, 0, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_txbdg"]
 
-[sub_resource type="SphereMesh" id="SphereMesh_bf4a4"]
-radius = 0.063
-height = 0.125
-
 [sub_resource type="SphereMesh" id="SphereMesh_rwdhx"]
 radius = 0.125
 height = 0.25
 
 [sub_resource type="BoxMesh" id="BoxMesh_iuq31"]
 size = Vector3(0.25, 0.5, 0.125)
+
+[sub_resource type="SphereMesh" id="SphereMesh_bf4a4"]
+radius = 0.063
+height = 0.125
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kbdxq"]
 
@@ -56,36 +56,31 @@ surface_material_override/0 = SubResource("StandardMaterial3D_hmr03")
 [node name="collision_shape" type="CollisionShape3D" parent="greg_the_cube"]
 shape = SubResource("BoxShape3D_txbdg")
 
-[node name="left_foot" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.063, 0.063, 0)
-mesh = SubResource("SphereMesh_bf4a4")
-skeleton = NodePath("../character/mesh")
-
-[node name="character" type="CharacterBody3D" parent="." node_paths=PackedStringArray("left_foot")]
+[node name="character" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 wall_min_slide_angle = 0.0
 script = ExtResource("1_faoee")
-left_foot = NodePath("../left_foot")
 metadata/_edit_group_ = true
 
 [node name="mesh" type="Node3D" parent="character"]
 
-[node name="body" type="Node3D" parent="character/mesh"]
-
-[node name="head" type="MeshInstance3D" parent="character/mesh/body"]
+[node name="head" type="MeshInstance3D" parent="character/mesh"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, -0.063)
 mesh = SubResource("SphereMesh_rwdhx")
-skeleton = NodePath("../../..")
+skeleton = NodePath("../..")
 
-[node name="torso" type="MeshInstance3D" parent="character/mesh/body"]
+[node name="torso" type="MeshInstance3D" parent="character/mesh"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
 mesh = SubResource("BoxMesh_iuq31")
-skeleton = NodePath("../../..")
+skeleton = NodePath("../..")
 
-[node name="left_hip" type="MeshInstance3D" parent="character/mesh/body"]
+[node name="left_hip" type="MeshInstance3D" parent="character/mesh"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.063, 0.063, 0)
 mesh = SubResource("SphereMesh_bf4a4")
-skeleton = NodePath("../..")
+
+[node name="left_foot" type="MeshInstance3D" parent="character/mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.063, -0.937, 0)
+mesh = SubResource("SphereMesh_bf4a4")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="character"]
 shape = SubResource("CapsuleShape3D_kbdxq")
