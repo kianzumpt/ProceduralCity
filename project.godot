@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="psychic-tribble"
-run/main_scene="res://scenes/procedural_animation.tscn"
+run/main_scene="res://scenes/jet_test_scene.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -19,3 +19,7 @@ config/icon="res://icon.svg"
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
+
+[rendering]
+
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=0
