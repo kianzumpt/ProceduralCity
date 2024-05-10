@@ -81,6 +81,7 @@ shape = SubResource("BoxShape3D_mk5gd")
 
 [node name="pointer" type="MeshInstance3D" parent="jet"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -100)
+cast_shadow = 0
 mesh = SubResource("SphereMesh_klhvh")
 surface_material_override/0 = SubResource("StandardMaterial3D_qh42i")
 
