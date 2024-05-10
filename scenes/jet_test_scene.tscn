@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://fi170282iqqg"]
+[gd_scene load_steps=3 format=3 uid="uid://fi170282iqqg"]
 
 [ext_resource type="PackedScene" uid="uid://defwdd5hr4ugp" path="res://scenes/jet_level.tscn" id="1_53x1t"]
+[ext_resource type="Script" path="res://scripts/jet_hud.gd" id="2_ykus5"]
 
 [node name="Node" type="Node"]
 
@@ -8,14 +9,16 @@
 jet_camera = NodePath("../jet_sub_viewport_container/jet_sub_viewport/jet_camera")
 car_camera = NodePath("../car_sub_viewport_container/car_sub_viewport/car_camera")
 
-[node name="jet_sub_viewport_container" type="SubViewportContainer" parent="."]
+[node name="jet_sub_viewport_container" type="SubViewportContainer" parent="." node_paths=PackedStringArray("level")]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_top = -360.0
-offset_right = 1280.0
+offset_right = 640.0
 offset_bottom = 360.0
 grow_vertical = 2
+script = ExtResource("2_ykus5")
+level = NodePath("../root")
 
 [node name="jet_sub_viewport" type="SubViewport" parent="jet_sub_viewport_container"]
 handle_input_locally = false
