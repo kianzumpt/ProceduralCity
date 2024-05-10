@@ -1,7 +1,8 @@
-[gd_scene load_steps=14 format=3 uid="uid://fi170282iqqg"]
+[gd_scene load_steps=19 format=3 uid="uid://fi170282iqqg"]
 
 [ext_resource type="Script" path="res://scripts/jet.gd" id="1_oatjd"]
 [ext_resource type="Texture2D" uid="uid://3ubu7xbwiqvy" path="res://icon.svg" id="2_2qyw5"]
+[ext_resource type="Script" path="res://scripts/car_placeholder.gd" id="3_lavlc"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u8vx6"]
 friction = 0.0
@@ -17,6 +18,11 @@ size = Vector3(0.5, 2, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mk5gd"]
 size = Vector3(10, 3, 20)
+
+[sub_resource type="SphereMesh" id="SphereMesh_klhvh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qh42i"]
+shading_mode = 0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n6wvp"]
 albedo_texture = ExtResource("2_2qyw5")
@@ -37,6 +43,12 @@ size = Vector3(130, 450, 50)
 [sub_resource type="BoxMesh" id="BoxMesh_xucxw"]
 size = Vector3(130, 450, 60)
 
+[sub_resource type="BoxMesh" id="BoxMesh_f1via"]
+size = Vector3(2, 1.2, 4.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_eu6xj"]
+size = Vector3(2, 1.2, 4.4)
+
 [node name="root" type="Node3D"]
 
 [node name="camera" type="Camera3D" parent="."]
@@ -44,7 +56,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 50)
 far = 10000.0
 
 [node name="jet" type="RigidBody3D" parent="." node_paths=PackedStringArray("camera")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 5000)
 mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_u8vx6")
 gravity_scale = 0.0
@@ -64,6 +76,11 @@ mesh = SubResource("BoxMesh_t7t1x")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="jet"]
 shape = SubResource("BoxShape3D_mk5gd")
+
+[node name="pointer" type="MeshInstance3D" parent="jet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -100)
+mesh = SubResource("SphereMesh_klhvh")
+surface_material_override/0 = SubResource("StandardMaterial3D_qh42i")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.926213, -0.367416, 0.0844668, 0, 0.22405, 0.974578, -0.377, -0.902667, 0.207518, 0, 20.6152, 0)
@@ -105,3 +122,13 @@ shape = SubResource("BoxShape3D_kjd3e")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D4"]
 mesh = SubResource("BoxMesh_xucxw")
+
+[node name="car_placeholder" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 5000)
+script = ExtResource("3_lavlc")
+
+[node name="mesh_instance" type="MeshInstance3D" parent="car_placeholder"]
+mesh = SubResource("BoxMesh_f1via")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="car_placeholder"]
+shape = SubResource("BoxShape3D_eu6xj")
