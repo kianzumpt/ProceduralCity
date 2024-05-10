@@ -5,6 +5,10 @@ extends RigidBody3D
 var pitch_angle : float = 0.0
 var roll_angle : float = 0.0
 
+var bullet_template : PackedScene = preload("res://scenes/bullet.tscn")
+var shoot_cooldown : float = 0.1
+var shoot_timer : float = 0.0
+
 @onready var camera_offset = camera.global_position - global_position
 
 var gravity : Vector3 = Vector3(0.0, -9.8, 0.0)
@@ -40,7 +44,7 @@ func get_drag_coefficient(angle_of_attack_in_radians : float) -> float:
 func get_lift_coefficient(angle_of_attack_in_radians : float) -> float:
 	return sin(angle_of_attack_in_radians * 0.5 * PI / stall_angle_in_radians) * max_lift_coefficient
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	
 	var dynamic_pressure = get_dynamic_pressure()
 	apply_lift(dynamic_pressure)
@@ -62,10 +66,20 @@ func _physics_process(_delta):
 	camera.global_position = global_position + (camera.basis * Vector3(0.0, 10.0, 50.0))
 	
 	var space_state = get_world_3d().direct_space_state
-	var query = PhysicsRayQueryParameters3D.create(global_position - (basis.z * 10.1), global_position - (basis.z * 110))
+	var query = PhysicsRayQueryParameters3D.create(global_position - (basis.z * 10.1), global_position - (basis.z * 1010))
 	var result = space_state.intersect_ray(query)
 	
 	if result:
 		$pointer.global_position = result.position
 	else:
 		$pointer.global_position = global_position - (basis.z * 110)
+	
+	if Input.is_action_pressed("face_button_bottom"):
+		if shoot_timer > 0.0:
+			shoot_timer -= delta
+		else:
+			var bullet_instance : Bullet = bullet_template.instantiate()
+			bullet_instance.start_position = global_position - (basis.z * 10.1)
+			bullet_instance.direction = -basis.z
+			get_tree().get_root().add_child(bullet_instance)
+			shoot_timer = shoot_cooldown
