@@ -19,6 +19,8 @@ var max_lift_coefficient : float = 2.0
 var min_drag_coefficient : float = 0.1
 var stall_angle_in_radians : float = deg_to_rad(30.0)
 
+var show_radar : bool = false
+
 func apply_gravity() -> void:
 	apply_force(mass * gravity)
 
@@ -45,6 +47,10 @@ func get_drag_coefficient(angle_of_attack_in_radians : float) -> float:
 func get_lift_coefficient(angle_of_attack_in_radians : float) -> float:
 	return sin(angle_of_attack_in_radians * 0.5 * PI / stall_angle_in_radians) * max_lift_coefficient
 
+func _process(_delta):
+	if Input.is_action_just_released("face_button_left"):
+		show_radar = !show_radar
+
 func _physics_process(delta):
 	
 	var dynamic_pressure = get_dynamic_pressure()
@@ -70,17 +76,23 @@ func _physics_process(delta):
 	var query = PhysicsRayQueryParameters3D.create(global_position - (basis.z * 10.1), global_position - (basis.z * 1010))
 	var result = space_state.intersect_ray(query)
 	
-	if result:
-		$pointer.global_position = result.position
-	else:
-		$pointer.global_position = global_position - (basis.z * 110)
-	
-	if Input.is_action_pressed("face_button_bottom"):
-		if shoot_timer > 0.0:
-			shoot_timer -= delta
+	if !show_radar:
+		
+		$pointer.show()
+		
+		if result:
+			$pointer.global_position = result.position
 		else:
-			var bullet_instance : Bullet = bullet_template.instantiate()
-			bullet_instance.start_position = global_position - (basis.z * 10.1)
-			bullet_instance.direction = -basis.z
-			get_tree().get_root().add_child(bullet_instance)
-			shoot_timer = shoot_cooldown
+			$pointer.global_position = global_position - (basis.z * 110)
+		
+		if Input.is_action_pressed("face_button_bottom"):
+			if shoot_timer > 0.0:
+				shoot_timer -= delta
+			else:
+				var bullet_instance : Bullet = bullet_template.instantiate()
+				bullet_instance.start_position = global_position - (basis.z * 10.1)
+				bullet_instance.direction = -basis.z
+				get_tree().get_root().add_child(bullet_instance)
+				shoot_timer = shoot_cooldown
+	else:
+		$pointer.hide()
