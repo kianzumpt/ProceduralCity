@@ -1,6 +1,7 @@
 extends RigidBody3D
 
-@export var camera : Camera3D
+@export var level : Level
+@onready var camera : Camera3D = level.jet_camera
 
 var pitch_angle : float = 0.0
 var roll_angle : float = 0.0

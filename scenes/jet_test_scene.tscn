@@ -1,137 +1,47 @@
-[gd_scene load_steps=19 format=3 uid="uid://fi170282iqqg"]
+[gd_scene load_steps=2 format=3 uid="uid://fi170282iqqg"]
 
-[ext_resource type="Script" path="res://scripts/jet.gd" id="1_oatjd"]
-[ext_resource type="Texture2D" uid="uid://3ubu7xbwiqvy" path="res://icon.svg" id="2_2qyw5"]
-[ext_resource type="Script" path="res://scripts/car_placeholder.gd" id="3_lavlc"]
+[ext_resource type="PackedScene" uid="uid://defwdd5hr4ugp" path="res://scenes/jet_level.tscn" id="1_53x1t"]
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u8vx6"]
-friction = 0.0
+[node name="Node" type="Node"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_4o154"]
-size = Vector3(3, 3, 20)
+[node name="root" parent="." node_paths=PackedStringArray("jet_camera", "car_camera") instance=ExtResource("1_53x1t")]
+jet_camera = NodePath("../jet_sub_viewport_container/jet_sub_viewport/jet_camera")
+car_camera = NodePath("../car_sub_viewport_container/car_sub_viewport/car_camera")
 
-[sub_resource type="BoxMesh" id="BoxMesh_cigjk"]
-size = Vector3(15, 1, 10)
+[node name="jet_sub_viewport_container" type="SubViewportContainer" parent="."]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -360.0
+offset_right = 1280.0
+offset_bottom = 360.0
+grow_vertical = 2
 
-[sub_resource type="BoxMesh" id="BoxMesh_t7t1x"]
-size = Vector3(0.5, 2, 5)
+[node name="jet_sub_viewport" type="SubViewport" parent="jet_sub_viewport_container"]
+handle_input_locally = false
+size = Vector2i(640, 720)
+render_target_update_mode = 4
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_mk5gd"]
-size = Vector3(10, 3, 20)
-
-[sub_resource type="SphereMesh" id="SphereMesh_klhvh"]
-radius = 2.0
-height = 4.0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qh42i"]
-shading_mode = 0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n6wvp"]
-albedo_texture = ExtResource("2_2qyw5")
-uv1_scale = Vector3(1000, 1000, 1000)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eresq"]
-
-[sub_resource type="QuadMesh" id="QuadMesh_u67oe"]
-material = SubResource("StandardMaterial3D_eresq")
-size = Vector2(10000, 10000)
-orientation = 1
-
-[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_pkgwx"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_kjd3e"]
-size = Vector3(130, 450, 50)
-
-[sub_resource type="BoxMesh" id="BoxMesh_xucxw"]
-size = Vector3(130, 450, 60)
-
-[sub_resource type="BoxMesh" id="BoxMesh_f1via"]
-size = Vector3(2, 1.2, 4.4)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_eu6xj"]
-size = Vector3(2, 1.2, 4.4)
-
-[node name="root" type="Node3D"]
-
-[node name="camera" type="Camera3D" parent="."]
+[node name="jet_camera" type="Camera3D" parent="jet_sub_viewport_container/jet_sub_viewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 50)
 far = 10000.0
 
-[node name="jet" type="RigidBody3D" parent="." node_paths=PackedStringArray("camera")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 5000)
-mass = 100.0
-physics_material_override = SubResource("PhysicsMaterial_u8vx6")
-gravity_scale = 0.0
-script = ExtResource("1_oatjd")
-camera = NodePath("../camera")
+[node name="car_sub_viewport_container" type="SubViewportContainer" parent="."]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -640.0
+offset_top = -360.0
+offset_bottom = 360.0
+grow_horizontal = 0
+grow_vertical = 2
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="jet"]
-mesh = SubResource("BoxMesh_4o154")
+[node name="car_sub_viewport" type="SubViewport" parent="car_sub_viewport_container"]
+handle_input_locally = false
+size = Vector2i(640, 720)
+render_target_update_mode = 4
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="jet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
-mesh = SubResource("BoxMesh_cigjk")
-
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="jet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 7.5)
-mesh = SubResource("BoxMesh_t7t1x")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="jet"]
-shape = SubResource("BoxShape3D_mk5gd")
-
-[node name="pointer" type="MeshInstance3D" parent="jet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -100)
-cast_shadow = 0
-mesh = SubResource("SphereMesh_klhvh")
-surface_material_override/0 = SubResource("StandardMaterial3D_qh42i")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.926213, -0.367416, 0.0844668, 0, 0.22405, 0.974578, -0.377, -0.902667, 0.207518, 0, 20.6152, 0)
-shadow_enabled = true
-directional_shadow_max_distance = 1000.0
-
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
-material_override = SubResource("StandardMaterial3D_n6wvp")
-mesh = SubResource("QuadMesh_u67oe")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-shape = SubResource("WorldBoundaryShape3D_pkgwx")
-
-[node name="StaticBody3D2" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -295.377, 225, -1332.5)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2"]
-shape = SubResource("BoxShape3D_kjd3e")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D2"]
-mesh = SubResource("BoxMesh_xucxw")
-
-[node name="StaticBody3D3" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1863.76, 225, 296.784)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D3"]
-shape = SubResource("BoxShape3D_kjd3e")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D3"]
-mesh = SubResource("BoxMesh_xucxw")
-
-[node name="StaticBody3D4" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -907.924, 225, -338.802)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D4"]
-shape = SubResource("BoxShape3D_kjd3e")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D4"]
-mesh = SubResource("BoxMesh_xucxw")
-
-[node name="car_placeholder" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 5000)
-script = ExtResource("3_lavlc")
-
-[node name="mesh_instance" type="MeshInstance3D" parent="car_placeholder"]
-mesh = SubResource("BoxMesh_f1via")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="car_placeholder"]
-shape = SubResource("BoxShape3D_eu6xj")
+[node name="car_camera" type="Camera3D" parent="car_sub_viewport_container/car_sub_viewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.95769, 5006.96)
