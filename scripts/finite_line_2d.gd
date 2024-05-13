@@ -60,7 +60,11 @@ func get_finite_x_intercept(width : float) -> Variant:
 	
 	# otherwise return this as a valid intercept
 	return x
-	
+
+func angle() -> float:
+	var relative_end = end - start
+	return relative_end.angle()
+
 func is_intersecting(other_line : FiniteLine2D) -> Variant:
 	
 	# calculate we each point would be if start was at the origin (0, 0)
@@ -96,3 +100,9 @@ func is_intersecting(other_line : FiniteLine2D) -> Variant:
 	
 func get_center() -> Vector2:
 	return (start + end) / 2.0
+
+func rotate_around(point : Vector2, angle : float):
+	return FiniteLine2D.new(
+		(start - point).rotated(angle) + point,
+		(end - point).rotated(angle) + point
+	)

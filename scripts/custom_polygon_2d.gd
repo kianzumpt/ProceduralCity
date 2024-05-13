@@ -2,11 +2,43 @@ class_name CustomPolygon2D
 
 var center : Vector2
 var local_lines : Array
+var local_bounding_box : Vector4
 
 func _init(new_center : Vector2, new_local_lines : Array):
 	center = new_center
 	local_lines = new_local_lines
+	calculate_local_bounding_box()
+
+func calculate_local_bounding_box() -> void:
 	
+	var min_x = 0.0
+	var max_x = 0.0
+	var min_y = 0.0
+	var max_y = 0.0
+	
+	for local_line in local_lines:
+		if local_line.start.x < min_x:
+			min_x = local_line.start.x
+		
+		if local_line.start.x > max_x:
+			max_x = local_line.start.x
+			
+		if local_line.start.y < min_y:
+			min_y = local_line.start.y
+		
+		if local_line.start.y > max_y:
+			max_y = local_line.start.y
+	
+	local_bounding_box = Vector4(min_x, min_y, max_x, max_y)
+
+func get_global_bounding_box() -> Vector4:
+	return Vector4(
+		local_bounding_box.x + center.x, 
+		local_bounding_box.y + center.y,
+		local_bounding_box.z + center.x,
+		local_bounding_box.w + center.y,
+	)
+
 static func new_regular_polygon(new_center : Vector2, sides : int, radius : float) -> CustomPolygon2D:
 	
 	# create an empty list of line segments
@@ -39,6 +71,8 @@ func scale(new_scale : Vector2) -> void:
 	for line in local_lines:
 		line.start = Vector2(line.start.x * new_scale.x, line.start.y * new_scale.y)
 		line.end = Vector2(line.end.x * new_scale.x, line.end.y * new_scale.y)
+		
+	calculate_local_bounding_box()
 
 func skew(radius : float) -> void:
 	
@@ -58,6 +92,8 @@ func skew(radius : float) -> void:
 		
 		skew_vector = next_skew_vector
 		next_skew_vector = Vector2.UP.rotated(randf() * 2.0 * PI) * (randf() * radius)
+		
+	calculate_local_bounding_box()
 
 func local_line_to_global_line(line : FiniteLine2D) -> FiniteLine2D:
 	return FiniteLine2D.new(line.start + center, line.end + center)
@@ -83,8 +119,16 @@ func is_line_intersecting(line : FiniteLine2D) -> Array:
 
 func is_point_inside(point : Vector2) -> bool:
 	var intersections = is_line_intersecting(FiniteLine2D.new(Vector2(0.0, point.y), point))
-	print(intersections.size())
 	return intersections.size() % 2 != 0
+
+func rotate_around_center(angle : float) -> CustomPolygon2D:
+	
+	var new_local_lines : Array = []
+	
+	for local_line in local_lines:
+		new_local_lines.append(local_line.rotate_around(Vector2.ZERO, angle))
+		
+	return CustomPolygon2D.new(center, new_local_lines)
 
 func clamp_line(line : FiniteLine2D) -> Variant:
 	
