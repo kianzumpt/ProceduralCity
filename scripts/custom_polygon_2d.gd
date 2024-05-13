@@ -4,6 +4,9 @@ var center : Vector2
 var local_lines : Array
 var local_bounding_box : Vector4
 
+# it is assumed line[0].end == line[1].start, and that this connects at the end
+# todo: verify this is true in the constructor and throw an exception if not true
+
 func _init(new_center : Vector2, new_local_lines : Array):
 	center = new_center
 	local_lines = new_local_lines
@@ -99,12 +102,12 @@ func local_line_to_global_line(line : FiniteLine2D) -> FiniteLine2D:
 	return FiniteLine2D.new(line.start + center, line.end + center)
 
 func global_lines() -> Array:
-	var global_lines : Array = []
+	var new_global_lines : Array = []
 	
 	for local_line in local_lines:
-		global_lines.append(local_line_to_global_line(local_line))
+		new_global_lines.append(local_line_to_global_line(local_line))
 	
-	return global_lines
+	return new_global_lines
 
 func is_line_intersecting(line : FiniteLine2D) -> Array:
 	
@@ -117,7 +120,20 @@ func is_line_intersecting(line : FiniteLine2D) -> Array:
 	
 	return intersections
 
+func is_line_intersecting_detailed(line : FiniteLine2D) -> Dictionary:
+	var intersections : Array = []
+	var lines_indices : Array = []
+	
+	for i in local_lines.size():
+		var intersection_point = line.is_intersecting(local_line_to_global_line(local_lines[i]))
+		if intersection_point != null:
+			intersections.append(intersection_point)
+			lines_indices.append(i)
+	
+	return {"intersections": intersections, "lines_indices": lines_indices}
+
 func is_point_inside(point : Vector2) -> bool:
+	# todo: use the bounding box instead of 0 here
 	var intersections = is_line_intersecting(FiniteLine2D.new(Vector2(0.0, point.y), point))
 	return intersections.size() % 2 != 0
 
@@ -148,3 +164,79 @@ func clamp_line(line : FiniteLine2D) -> Variant:
 			return FiniteLine2D.new(intersections[0], line.end)
 		
 	return null
+
+func get_area() -> float:
+	
+	var area : float = 0
+	
+	for local_line in local_lines:
+		area += local_line.signed_area_to_the_x_axis()
+		
+	return abs(area)
+
+func split(line : FiniteLine2D) -> Array:
+	
+	var intersections_detailed = is_line_intersecting_detailed(line)
+	
+	if intersections_detailed["intersections"].size() != 2:
+		return [self]
+	
+	var local_lines_1 : Array = []
+	var local_lines_2 : Array = []
+	
+	var start_of_first_split_line : FiniteLine2D = FiniteLine2D.new(
+		local_lines[intersections_detailed["lines_indices"][0]].start, 
+		intersections_detailed["intersections"][0] - center
+	)
+	
+	var end_of_first_split_line : FiniteLine2D  = FiniteLine2D.new(
+		intersections_detailed["intersections"][0] - center,
+		local_lines[intersections_detailed["lines_indices"][0]].end
+	)
+	
+	var start_of_second_split_line : FiniteLine2D  = FiniteLine2D.new(
+		local_lines[intersections_detailed["lines_indices"][1]].start, 
+		intersections_detailed["intersections"][1] - center
+	)
+	
+	var end_of_first_second_line : FiniteLine2D  = FiniteLine2D.new(
+		intersections_detailed["intersections"][1] - center,
+		local_lines[intersections_detailed["lines_indices"][1]].end
+	)
+
+	var split_line : FiniteLine2D = FiniteLine2D.new(intersections_detailed["intersections"][0] - center, intersections_detailed["intersections"][1] - center)
+	var reverse_split_line : FiniteLine2D = FiniteLine2D.new(intersections_detailed["intersections"][1] - center, intersections_detailed["intersections"][0] - center)
+	
+	for i in local_lines.size():
+		
+		if i < intersections_detailed["lines_indices"][0] or i > intersections_detailed["lines_indices"][1]:
+			local_lines_1.append(local_lines[i])
+			
+		if i > intersections_detailed["lines_indices"][0] and i < intersections_detailed["lines_indices"][1]:
+			local_lines_2.append(local_lines[i])
+		
+		if i == intersections_detailed["lines_indices"][0]:
+			
+			local_lines_1.append(start_of_first_split_line)
+			local_lines_1.append(split_line)
+			local_lines_1.append(end_of_first_second_line)
+			
+			local_lines_2.append(start_of_second_split_line)
+			local_lines_2.append(reverse_split_line)
+			local_lines_2.append(end_of_first_split_line)
+	
+	return [CustomPolygon2D.new(center, local_lines_1), CustomPolygon2D.new(center, local_lines_2)]
+
+func get_longest_line_index() -> int:
+	
+	var index : int = 0
+	var distance : float = local_lines[0].start.distance_to(local_lines[0].end)
+	
+	for i in local_lines.size():
+		var new_distance = local_lines[i].start.distance_to(local_lines[i].end)
+		if new_distance > distance:
+			distance = new_distance
+			index = i
+		
+	return index
+		

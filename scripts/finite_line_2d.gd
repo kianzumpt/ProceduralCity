@@ -106,3 +106,6 @@ func rotate_around(point : Vector2, angle : float):
 		(start - point).rotated(angle) + point,
 		(end - point).rotated(angle) + point
 	)
+	
+func signed_area_to_the_x_axis() -> float:
+	return get_center().y * (start.x - end.x)
