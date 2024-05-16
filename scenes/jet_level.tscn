@@ -1,9 +1,9 @@
-[gd_scene load_steps=20 format=3 uid="uid://defwdd5hr4ugp"]
+[gd_scene load_steps=21 format=3 uid="uid://defwdd5hr4ugp"]
 
 [ext_resource type="Script" path="res://scripts/jet_level.gd" id="1_nmm6f"]
 [ext_resource type="Script" path="res://scripts/jet.gd" id="1_ypis4"]
-[ext_resource type="Texture2D" uid="uid://3ubu7xbwiqvy" path="res://icon.svg" id="2_ii0wk"]
 [ext_resource type="Script" path="res://scripts/car_placeholder.gd" id="3_jnni1"]
+[ext_resource type="Texture2D" uid="uid://c4s2kwoyxtl6v" path="res://grid.png" id="3_n78xl"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u8vx6"]
 friction = 0.0
@@ -28,7 +28,7 @@ height = 4.0
 shading_mode = 0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n6wvp"]
-albedo_texture = ExtResource("2_ii0wk")
+albedo_texture = ExtResource("3_n78xl")
 uv1_scale = Vector3(1000, 1000, 1000)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eresq"]
@@ -45,6 +45,9 @@ size = Vector3(130, 450, 50)
 
 [sub_resource type="BoxMesh" id="BoxMesh_xucxw"]
 size = Vector3(130, 450, 60)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0uhn0"]
+albedo_color = Color(0.863405, 0.683788, 0.0132464, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_f1via"]
 size = Vector3(2, 1.2, 4.4)
@@ -130,6 +133,7 @@ script = ExtResource("3_jnni1")
 level = NodePath("..")
 
 [node name="mesh_instance" type="MeshInstance3D" parent="car_placeholder"]
+material_override = SubResource("StandardMaterial3D_0uhn0")
 mesh = SubResource("BoxMesh_f1via")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="car_placeholder"]
