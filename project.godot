@@ -98,6 +98,10 @@ back_S={
 ]
 }
 
+[physics]
+
+common/physics_ticks_per_second=120
+
 [rendering]
 
 lights_and_shadows/positional_shadow/soft_shadow_filter_quality=0
