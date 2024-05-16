@@ -40,6 +40,9 @@ func get_finite_x_intercept(width : float) -> Variant:
 	# get the x intercept given the lines are infinte
 	var x = get_x_intercept()
 	
+	if x == null:
+		return null
+	
 	# no intersection if the horizontal line has no width
 	if width == 0.0:
 		return null
@@ -53,7 +56,6 @@ func get_finite_x_intercept(width : float) -> Variant:
 	
 	# check if the x intercept lies between 0 and the point (width, 0)
 	var within_x_range : bool = x >= 0.0 and x <= width
-	
 	# if not with this range return null
 	if not within_x_range:
 		return null
@@ -64,6 +66,9 @@ func get_finite_x_intercept(width : float) -> Variant:
 func angle() -> float:
 	var relative_end = end - start
 	return relative_end.angle()
+
+func duplicate():
+	return FiniteLine2D.new(start, end)
 
 func is_intersecting(other_line : FiniteLine2D) -> Variant:
 	
