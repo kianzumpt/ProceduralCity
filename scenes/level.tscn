@@ -1,9 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://defwdd5hr4ugp"]
+[gd_scene load_steps=18 format=3 uid="uid://defwdd5hr4ugp"]
 
 [ext_resource type="Script" path="res://scripts/jet_level.gd" id="1_nmm6f"]
 [ext_resource type="Script" path="res://scripts/jet.gd" id="1_ypis4"]
-[ext_resource type="Script" path="res://scripts/car_placeholder.gd" id="3_jnni1"]
-[ext_resource type="Texture2D" path="res://grid.png" id="3_n78xl"]
+[ext_resource type="PackedScene" uid="uid://criwf5ris0fki" path="res://scenes/car.tscn" id="2_h2pn6"]
+[ext_resource type="Texture2D" uid="uid://c4s2kwoyxtl6v" path="res://assets/textures/grid.png" id="3_n78xl"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u8vx6"]
 friction = 0.0
@@ -46,17 +46,11 @@ size = Vector3(130, 450, 50)
 [sub_resource type="BoxMesh" id="BoxMesh_xucxw"]
 size = Vector3(130, 450, 60)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0uhn0"]
-albedo_color = Color(0.863405, 0.683788, 0.0132464, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_f1via"]
-size = Vector3(2, 1.2, 4.4)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_eu6xj"]
-size = Vector3(2, 1.2, 4.4)
-
 [node name="root" type="Node3D"]
 script = ExtResource("1_nmm6f")
+
+[node name="car" parent="." node_paths=PackedStringArray("level") instance=ExtResource("2_h2pn6")]
+level = NodePath("..")
 
 [node name="jet" type="RigidBody3D" parent="." node_paths=PackedStringArray("level")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 5000)
@@ -126,15 +120,3 @@ shape = SubResource("BoxShape3D_kjd3e")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D4"]
 mesh = SubResource("BoxMesh_xucxw")
-
-[node name="car_placeholder" type="CharacterBody3D" parent="." node_paths=PackedStringArray("level")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 5000)
-script = ExtResource("3_jnni1")
-level = NodePath("..")
-
-[node name="mesh_instance" type="MeshInstance3D" parent="car_placeholder"]
-material_override = SubResource("StandardMaterial3D_0uhn0")
-mesh = SubResource("BoxMesh_f1via")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="car_placeholder"]
-shape = SubResource("BoxShape3D_eu6xj")

@@ -11,7 +11,7 @@ func _ready():
 	
 	if result:
 		
-		if result.collider is CarPlaceholder:
+		if result.collider is Car:
 			result.collider.damage()
 		
 		$mesh_instance.global_position = result.position

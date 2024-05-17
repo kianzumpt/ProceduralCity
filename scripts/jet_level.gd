@@ -7,4 +7,4 @@ func get_jet():
 	return $jet
 	
 func get_car():
-	return $car_placeholder
+	return $car
