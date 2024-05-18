@@ -1,7 +1,4 @@
-extends Node2D
-
-@export var root_3d : Node3D
-@export var camera : Camera3D
+extends Node
 
 var original_polygon : CustomPolygon2D
 var polygons : Array
@@ -9,14 +6,70 @@ var center : Vector2 = Vector2(1280.0, 720.0) / 2.0
 var zoom : float = 1.0
 var offset : Vector2 = Vector2.ZERO
 
+func vector2_on_xy_to_vector3_xz(vector2 : Vector2, y : float):
+	return Vector3(vector2.x, y, vector2.y)
+
+func generate_prism_mesh_from_polygon(polygon : CustomPolygon2D, height : float) -> Array:
+	
+	var surface_array : Array = []
+	surface_array.resize(Mesh.ARRAY_MAX)
+	
+	var vertices = PackedVector3Array()
+	var uvs = PackedVector2Array()
+	var normals = PackedVector3Array()
+	var indices = PackedInt32Array()
+	
+	# generate ring
+	for i in polygon.edges.size():
+		vertices.append_array([
+			vector2_on_xy_to_vector3_xz(polygon.edges[i].start, height),
+			vector2_on_xy_to_vector3_xz(polygon.edges[i].end, height),
+			vector2_on_xy_to_vector3_xz(polygon.edges[i].start, 0.0),
+			vector2_on_xy_to_vector3_xz(polygon.edges[i].end, 0.0),
+		])
+		
+		# todo: add uvs
+		uvs.append_array([Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO])
+		
+		# todo: add normals
+		var normal = Vector3.FORWARD.rotated(Vector3.UP, polygon.edges[i].angle())
+		
+		normals.append_array([normal, normal, normal, normal])
+		
+		var index = i * 4
+		
+		indices.append_array([
+			index + 2, index + 1, index, 
+			index + 2, index + 3, index + 1
+		])
+	
+	var top_vertices = triangluate_polygon(polygon, height)
+	vertices.append_array(top_vertices)
+
+	for vertex in top_vertices:
+		uvs.append(Vector2.ZERO)
+	
+	for vertex in top_vertices:
+		normals.append(Vector3.UP)
+	
+	var indices_start = polygon.edges.size() * 4
+	
+	for i in top_vertices.size():
+		indices.append(indices_start + i)
+	
+	surface_array[Mesh.ARRAY_VERTEX] = vertices
+	surface_array[Mesh.ARRAY_TEX_UV] = uvs
+	surface_array[Mesh.ARRAY_NORMAL] = normals
+	surface_array[Mesh.ARRAY_INDEX] = indices
+	
+	return surface_array
 
 func _ready():
 	# 7, 17
-	original_polygon = generate_city_outline(Vector2.ZERO, 7, 17, 180.0)
+	original_polygon = generate_city_outline(Vector2.ZERO, 7, 17, 2000.0)
 	polygons = [original_polygon]
 	
-	
-	for i in 10:
+	for i in 2:
 		var line = find_split_line(original_polygon)
 		var new_polygons = []
 		for polygon in polygons:
@@ -24,7 +77,7 @@ func _ready():
 			if split_polygon.size() == 2.0:
 				var area1 = split_polygon[0].get_area()
 				var area2 = split_polygon[1].get_area()
-				if area1 < 1000.0 or area2 < 1000.0:
+				if area1 < 10000.0 or area2 < 10000.0:
 					split_polygon = [polygon]
 					
 			new_polygons.append_array(split_polygon)
@@ -34,29 +87,19 @@ func _ready():
 	var final_polygons = []
 	
 	for polygon in polygons:
-		final_polygons.append_array(split_polygon_into_grid(polygon, Vector2(30, 15)))
+		final_polygons.append_array(split_polygon_into_grid(polygon, Vector2(100, 200)))
 	
 	var final_final_polygons = []
 	
 	for polygon in final_polygons:
-		polygon = polygon.simplify(2.0)
-		final_final_polygons.append(polygon.shrink(1.0))
+		polygon = polygon.simplify(20.0)
+		final_final_polygons.append(polygon.shrink(10.0))
 	
 	for polygon in final_final_polygons:
 		polygon_to_mesh(polygon)
 	
 	polygons = final_final_polygons
 	polygons.append(original_polygon.shrink(-1.0))
-
-
-func _process(delta):
-	zoom += Input.get_axis("face_button_left", "face_button_bottom") * delta
-	zoom = clamp(zoom, 0.1, 100.0)
-	var input_vector = Input.get_vector("left_stick_left", "left_stick_right", "left_stick_up", "left_stick_down")
-	offset -= input_vector * 5.0 / zoom
-	queue_redraw()
-	
-	camera.global_position += Vector3(input_vector.x, Input.get_axis("face_button_left", "face_button_bottom"), input_vector.y)
 
 func generate_city_outline(city_center : Vector2, min_sides : int, max_sides : int, radius : float) -> CustomPolygon2D:
 	var polygon : CustomPolygon2D = CustomPolygon2D.new_regular_polygon(city_center, randi_range(min_sides, max_sides), radius)
@@ -111,7 +154,7 @@ func split_polygon_into_grid(polygon : CustomPolygon2D, grid_size : Vector2) -> 
 			else:
 				var area1 = split_polygon[0].get_area()
 				var area2 = split_polygon[1].get_area()
-				if area1 < 100.0 or area2 < 100.0:
+				if area1 < 10000.0 or area2 < 10000.0:
 					split_polygon = [grid_polygon]
 					
 			new_polygons.append_array(split_polygon)
@@ -136,7 +179,7 @@ func split_polygon_into_grid(polygon : CustomPolygon2D, grid_size : Vector2) -> 
 			else:
 				var area1 = split_polygon[0].get_area()
 				var area2 = split_polygon[1].get_area()
-				if area1 < 100.0 or area2 < 100.0:
+				if area1 < 10000.0 or area2 < 10000.0:
 					split_polygon = [grid_polygon]
 					
 			new_polygons.append_array(split_polygon)
@@ -144,11 +187,6 @@ func split_polygon_into_grid(polygon : CustomPolygon2D, grid_size : Vector2) -> 
 		final_polygons = new_polygons
 				
 	return final_polygons
-
-func _draw():
-	for polygon in polygons:
-		for edge in polygon.edges:
-			draw_line(edge.start + center, edge.end + center, Color.WHITE, -1.0, true)
 
 func get_cross_product(a : Vector2, b: Vector2) -> float:
 	return (a.x * b.y) - (a.y * b.x)
@@ -174,7 +212,7 @@ func is_ear(polygon : CustomPolygon2D, previous_index, current_index) -> bool:
 	
 	return true
 
-func triangluate_polygon(polygon : CustomPolygon2D, current_vertices : Array = []) -> Array:
+func triangluate_polygon(polygon : CustomPolygon2D, height : float, current_vertices : Array = []) -> Array:
 	
 	var edges = polygon.duplicate().edges
 	
@@ -188,53 +226,44 @@ func triangluate_polygon(polygon : CustomPolygon2D, current_vertices : Array = [
 			
 			if is_ear(polygon, previous_index, i):
 				current_vertices.append_array([
-					Vector3(edges[previous_index].start.x, 0.0, edges[previous_index].start.y),
-					Vector3(edges[i].start.x, 0.0, edges[i].start.y), 
-					Vector3(edges[i].end.x, 0.0, edges[i].end.y)
+					Vector3(edges[previous_index].start.x, height, edges[previous_index].start.y),
+					Vector3(edges[i].start.x, height, edges[i].start.y), 
+					Vector3(edges[i].end.x, height, edges[i].end.y)
 				])
 				var new_polygon : CustomPolygon2D = polygon.remove_ear(previous_index, i)
-				return triangluate_polygon(new_polygon, current_vertices)
+				return triangluate_polygon(new_polygon, height, current_vertices)
 	else:
 		for edge in edges:
-			current_vertices.append(Vector3(edge.start.x, 0.0, edge.start.y))
+			current_vertices.append(Vector3(edge.start.x, height, edge.start.y))
 			
 	return current_vertices
-
-func create_flat_surface_array(polygon : CustomPolygon2D, normal : Vector3) -> Array:
-	
-	var surface_array : Array = []
-	surface_array.resize(Mesh.ARRAY_MAX)
-	
-	var vertices = PackedVector3Array()
-	vertices.append_array(triangluate_polygon(polygon))
-	
-	# generate uvs
-	var uvs = PackedVector2Array()
-	for vertex in vertices:
-		uvs.append(Vector2(vertex.x, vertex.z))
-	
-	var normals = PackedVector3Array()
-	for vertex in vertices:
-		normals.append(normal)
-		
-	var indices = PackedInt32Array()
-	for i in vertices.size():
-		indices.append(i)
-	
-	surface_array[Mesh.ARRAY_VERTEX] = vertices
-	surface_array[Mesh.ARRAY_TEX_UV] = uvs
-	surface_array[Mesh.ARRAY_NORMAL] = normals
-	surface_array[Mesh.ARRAY_INDEX] = indices
-	
-	return surface_array
 
 func polygon_to_mesh(polygon : CustomPolygon2D):
 	
 	var mesh : ArrayMesh = ArrayMesh.new()
 	
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, create_flat_surface_array(polygon, Vector3.UP))
+	var x : float = pow(randf(), 10.0)
+	var prism = generate_prism_mesh_from_polygon(polygon, (x * 450.0) + 10.0)
+	
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, prism)
 	
 	var mesh_instance : MeshInstance3D = MeshInstance3D.new()
 	mesh_instance.mesh = mesh
 	
-	add_child(mesh_instance)
+	var material : StandardMaterial3D = StandardMaterial3D.new()
+	material.albedo_color = Color(randf(), randf(), randf())
+	mesh_instance.set_surface_override_material(0, material)
+	
+	var static_body : StaticBody3D = StaticBody3D.new()
+	
+	
+	var convex_polygon_shape : ConvexPolygonShape3D = ConvexPolygonShape3D.new()
+	convex_polygon_shape.points = prism[Mesh.ARRAY_VERTEX]
+	
+	var collision_shape : CollisionShape3D = CollisionShape3D.new()
+	collision_shape.shape = convex_polygon_shape;
+	
+	static_body.add_child(collision_shape)
+	static_body.add_child(mesh_instance)
+	
+	add_child(static_body)

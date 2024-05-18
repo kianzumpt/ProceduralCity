@@ -1,9 +1,9 @@
-[gd_scene load_steps=18 format=3 uid="uid://defwdd5hr4ugp"]
+[gd_scene load_steps=13 format=3 uid="uid://defwdd5hr4ugp"]
 
 [ext_resource type="Script" path="res://scripts/jet_level.gd" id="1_nmm6f"]
 [ext_resource type="Script" path="res://scripts/jet.gd" id="1_ypis4"]
 [ext_resource type="PackedScene" uid="uid://criwf5ris0fki" path="res://scenes/car.tscn" id="2_h2pn6"]
-[ext_resource type="Texture2D" uid="uid://c4s2kwoyxtl6v" path="res://assets/textures/grid.png" id="3_n78xl"]
+[ext_resource type="Script" path="res://scripts/procedural_generation.gd" id="5_nqdlu"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u8vx6"]
 friction = 0.0
@@ -27,24 +27,7 @@ height = 4.0
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qh42i"]
 shading_mode = 0
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n6wvp"]
-albedo_texture = ExtResource("3_n78xl")
-uv1_scale = Vector3(1000, 1000, 1000)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eresq"]
-
-[sub_resource type="QuadMesh" id="QuadMesh_u67oe"]
-material = SubResource("StandardMaterial3D_eresq")
-size = Vector2(10000, 10000)
-orientation = 1
-
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_pkgwx"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_kjd3e"]
-size = Vector3(130, 450, 50)
-
-[sub_resource type="BoxMesh" id="BoxMesh_xucxw"]
-size = Vector3(130, 450, 60)
 
 [node name="root" type="Node3D"]
 script = ExtResource("1_nmm6f")
@@ -87,36 +70,8 @@ directional_shadow_max_distance = 1000.0
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
-material_override = SubResource("StandardMaterial3D_n6wvp")
-mesh = SubResource("QuadMesh_u67oe")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
 shape = SubResource("WorldBoundaryShape3D_pkgwx")
 
-[node name="StaticBody3D2" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -295.377, 225, -1332.5)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2"]
-shape = SubResource("BoxShape3D_kjd3e")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D2"]
-mesh = SubResource("BoxMesh_xucxw")
-
-[node name="StaticBody3D3" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1863.76, 225, 296.784)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D3"]
-shape = SubResource("BoxShape3D_kjd3e")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D3"]
-mesh = SubResource("BoxMesh_xucxw")
-
-[node name="StaticBody3D4" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -907.924, 225, -338.802)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D4"]
-shape = SubResource("BoxShape3D_kjd3e")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D4"]
-mesh = SubResource("BoxMesh_xucxw")
+[node name="city" type="Node3D" parent="."]
+script = ExtResource("5_nqdlu")
