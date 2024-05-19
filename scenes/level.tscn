@@ -1,77 +1,53 @@
-[gd_scene load_steps=13 format=3 uid="uid://defwdd5hr4ugp"]
+[gd_scene load_steps=9 format=3 uid="uid://defwdd5hr4ugp"]
 
 [ext_resource type="Script" path="res://scripts/jet_level.gd" id="1_nmm6f"]
-[ext_resource type="Script" path="res://scripts/jet.gd" id="1_ypis4"]
 [ext_resource type="PackedScene" uid="uid://criwf5ris0fki" path="res://scenes/car.tscn" id="2_h2pn6"]
+[ext_resource type="PackedScene" uid="uid://dnbrxohb5kkad" path="res://scenes/jet.tscn" id="4_ncv48"]
 [ext_resource type="Script" path="res://scripts/procedural_generation.gd" id="5_nqdlu"]
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u8vx6"]
-friction = 0.0
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_5q1bg"]
+sky_top_color = Color(0.27451, 0.466667, 0.764706, 1)
+sky_horizon_color = Color(0.701961, 0.835294, 0.945098, 1)
+sky_curve = 0.181792
+ground_bottom_color = Color(0.188235, 0.717647, 0.760784, 1)
+ground_horizon_color = Color(0.188235, 0.717647, 0.760784, 1)
+ground_curve = 1e-05
 
-[sub_resource type="BoxMesh" id="BoxMesh_4o154"]
-size = Vector3(3, 3, 20)
+[sub_resource type="Sky" id="Sky_7jxsq"]
+sky_material = SubResource("ProceduralSkyMaterial_5q1bg")
 
-[sub_resource type="BoxMesh" id="BoxMesh_cigjk"]
-size = Vector3(15, 1, 10)
+[sub_resource type="Environment" id="Environment_nxcqe"]
+background_mode = 2
+sky = SubResource("Sky_7jxsq")
+ambient_light_source = 3
+ambient_light_color = Color(1, 1, 1, 1)
+reflected_light_source = 1
 
-[sub_resource type="BoxMesh" id="BoxMesh_t7t1x"]
-size = Vector3(0.5, 2, 5)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_mk5gd"]
-size = Vector3(10, 3, 20)
-
-[sub_resource type="SphereMesh" id="SphereMesh_klhvh"]
-radius = 2.0
-height = 4.0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qh42i"]
-shading_mode = 0
-
-[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_pkgwx"]
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_a0wkh"]
 
 [node name="root" type="Node3D"]
 script = ExtResource("1_nmm6f")
 
-[node name="car" parent="." node_paths=PackedStringArray("level") instance=ExtResource("2_h2pn6")]
-level = NodePath("..")
+[node name="world_environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_nxcqe")
 
-[node name="jet" type="RigidBody3D" parent="." node_paths=PackedStringArray("level")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 5000)
-mass = 100.0
-physics_material_override = SubResource("PhysicsMaterial_u8vx6")
-gravity_scale = 0.0
-script = ExtResource("1_ypis4")
-level = NodePath("..")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="jet"]
-mesh = SubResource("BoxMesh_4o154")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="jet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
-mesh = SubResource("BoxMesh_cigjk")
-
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="jet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 7.5)
-mesh = SubResource("BoxMesh_t7t1x")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="jet"]
-shape = SubResource("BoxShape3D_mk5gd")
-
-[node name="pointer" type="MeshInstance3D" parent="jet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -100)
-cast_shadow = 0
-mesh = SubResource("SphereMesh_klhvh")
-surface_material_override/0 = SubResource("StandardMaterial3D_qh42i")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.926213, -0.367416, 0.0844668, 0, 0.22405, 0.974578, -0.377, -0.902667, 0.207518, 0, 20.6152, 0)
-shadow_enabled = true
+[node name="directional_light" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.926213, -0.367416, 0.0844669, 0, 0.22405, 0.974578, -0.377, -0.902667, 0.207518, 0, 20.6152, 0)
+light_bake_mode = 0
+directional_shadow_mode = 0
 directional_shadow_max_distance = 1000.0
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
+[node name="ocean_boundary" type="StaticBody3D" parent="."]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-shape = SubResource("WorldBoundaryShape3D_pkgwx")
+[node name="collision_shape" type="CollisionShape3D" parent="ocean_boundary"]
+shape = SubResource("WorldBoundaryShape3D_a0wkh")
 
 [node name="city" type="Node3D" parent="."]
 script = ExtResource("5_nqdlu")
+
+[node name="car" parent="." node_paths=PackedStringArray("level") instance=ExtResource("2_h2pn6")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 5.5, 0)
+level = NodePath("..")
+
+[node name="jet" parent="." node_paths=PackedStringArray("level") instance=ExtResource("4_ncv48")]
+level = NodePath("..")

@@ -63,7 +63,7 @@ func get_finite_x_intercept(width : float) -> Variant:
 	# otherwise return this as a valid intercept
 	return x
 
-func angle() -> float:
+func get_angle() -> float:
 	var relative_end = end - start
 	return relative_end.angle()
 
@@ -78,16 +78,16 @@ func is_intersecting(other_line : FiniteLine2D) -> Variant:
 	var other_line_relative_end = other_line.end - start
 	
 	# get the angle of this line
-	var angle = relative_end.angle()
+	var line_angle = relative_end.angle()
 	
 	# rotate the end point so that this line rests on the x-axis
-	var rotated_end = relative_end.rotated(-angle)
+	var rotated_end = relative_end.rotated(-line_angle)
 	
 	
 	# rotate the other line the same way
 	var other_line_rotated = FiniteLine2D.new(
-		other_line_relative_start.rotated(-angle),
-		other_line_relative_end.rotated(-angle)
+		other_line_relative_start.rotated(-line_angle),
+		other_line_relative_end.rotated(-line_angle)
 	)
 	
 	# get the finite x intercept of the other line after the rotation, as the current line is not on the x-axis going from (0, 0) to (rotated_end.x, 0)
@@ -98,7 +98,7 @@ func is_intersecting(other_line : FiniteLine2D) -> Variant:
 		return null
 	
 	# get the intersect point, reverse the rotation, and reverse the relative move by adding start back
-	var intersection_point = start + Vector2(x, 0.0).rotated(angle)
+	var intersection_point = start + Vector2(x, 0.0).rotated(line_angle)
 	
 	# return the interstion point
 	return intersection_point

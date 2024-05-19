@@ -27,6 +27,7 @@ level = NodePath("../level")
 
 [node name="left_sub_viewport" type="SubViewport" parent="left_sub_viewport_container"]
 handle_input_locally = false
+msaa_3d = 2
 size = Vector2i(960, 1080)
 render_target_update_mode = 4
 
@@ -49,6 +50,7 @@ grow_vertical = 2
 
 [node name="right_sub_viewport" type="SubViewport" parent="right_sub_viewport_container"]
 handle_input_locally = false
+msaa_3d = 2
 size = Vector2i(960, 1080)
 render_target_update_mode = 4
 
@@ -89,6 +91,26 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 text = "Quit to desktop"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -25.0
+offset_right = 25.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="fps_counter" type="Label" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "60 FPS"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="pressed" from="pause_menu/vertical_box_container/button_resume" to="." method="_on_button_resume_pressed"]
 [connection signal="pressed" from="pause_menu/vertical_box_container/button_quit" to="." method="_on_button_quit_pressed"]

@@ -26,6 +26,8 @@ func _ready():
 
 func _process(_delta):
 	
+	$MarginContainer/fps_counter.text = str(Engine.get_frames_per_second()) + " FPS"
+	
 	if Input.is_action_just_pressed("ui_cancel"):
 		settings_open = !settings_open
 	

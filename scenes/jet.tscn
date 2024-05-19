@@ -1,0 +1,53 @@
+[gd_scene load_steps=9 format=3 uid="uid://dnbrxohb5kkad"]
+
+[ext_resource type="Script" path="res://scripts/jet.gd" id="1_x2tx0"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u8vx6"]
+friction = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_4o154"]
+size = Vector3(3, 3, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cigjk"]
+size = Vector3(15, 1, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_t7t1x"]
+size = Vector3(0.5, 2, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mk5gd"]
+size = Vector3(10, 3, 20)
+
+[sub_resource type="SphereMesh" id="SphereMesh_klhvh"]
+radius = 2.0
+height = 4.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qh42i"]
+shading_mode = 0
+
+[node name="jet" type="RigidBody3D" node_paths=PackedStringArray("level")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 5000)
+mass = 100.0
+physics_material_override = SubResource("PhysicsMaterial_u8vx6")
+gravity_scale = 0.0
+script = ExtResource("1_x2tx0")
+level = NodePath("")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_4o154")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+mesh = SubResource("BoxMesh_cigjk")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 7.5)
+mesh = SubResource("BoxMesh_t7t1x")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_mk5gd")
+
+[node name="pointer" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -100)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_klhvh")
+surface_material_override/0 = SubResource("StandardMaterial3D_qh42i")

@@ -6,6 +6,37 @@ var center : Vector2 = Vector2(1280.0, 720.0) / 2.0
 var zoom : float = 1.0
 var offset : Vector2 = Vector2.ZERO
 
+var random_materials : Array = []
+
+func generate_random_materials(amount : int) -> void:
+
+	var material : StandardMaterial3D = StandardMaterial3D.new()
+	material.albedo_color = Color("#e4b58c")
+	random_materials.append(material)
+	
+	material = StandardMaterial3D.new()
+	material.albedo_color = Color("#928b80")
+	random_materials.append(material)
+	
+	material = StandardMaterial3D.new()
+	material.albedo_color = Color("#fef5ec")
+	random_materials.append(material)
+	
+	material = StandardMaterial3D.new()
+	material.albedo_color = Color("#8f786b")
+	random_materials.append(material)
+	
+	material = StandardMaterial3D.new()
+	material.albedo_color = Color("#542324")
+	random_materials.append(material)
+	
+	#for i in amount:
+		#var random_float = (randf() * 0.5) + 0.5
+		#
+		#var material : StandardMaterial3D = StandardMaterial3D.new()
+		#material.albedo_color = Color(random_float, random_float, random_float)
+		#random_materials.append(material)
+
 func vector2_on_xy_to_vector3_xz(vector2 : Vector2, y : float):
 	return Vector3(vector2.x, y, vector2.y)
 
@@ -32,7 +63,7 @@ func generate_prism_mesh_from_polygon(polygon : CustomPolygon2D, height : float)
 		uvs.append_array([Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO])
 		
 		# todo: add normals
-		var normal = Vector3.FORWARD.rotated(Vector3.UP, polygon.edges[i].angle())
+		var normal = Vector3.FORWARD.rotated(Vector3.UP, polygon.edges[i].get_angle())
 		
 		normals.append_array([normal, normal, normal, normal])
 		
@@ -65,11 +96,13 @@ func generate_prism_mesh_from_polygon(polygon : CustomPolygon2D, height : float)
 	return surface_array
 
 func _ready():
-	# 7, 17
+	
+	generate_random_materials(20)
+	
 	original_polygon = generate_city_outline(Vector2.ZERO, 7, 17, 2000.0)
 	polygons = [original_polygon]
 	
-	for i in 2:
+	for i in 20:
 		var line = find_split_line(original_polygon)
 		var new_polygons = []
 		for polygon in polygons:
@@ -94,12 +127,17 @@ func _ready():
 	for polygon in final_polygons:
 		polygon = polygon.simplify(20.0)
 		final_final_polygons.append(polygon.shrink(10.0))
+
 	
 	for polygon in final_final_polygons:
-		polygon_to_mesh(polygon)
+		var x : float = pow(randf(), 10.0)
+		polygon_to_mesh(polygon, (x * 450.0) + 15.0, random_materials.pick_random())
 	
 	polygons = final_final_polygons
-	polygons.append(original_polygon.shrink(-1.0))
+	
+	var material : StandardMaterial3D = StandardMaterial3D.new()
+	material.albedo_color = Color("#2b2d25")
+	polygon_to_mesh(original_polygon.shrink(-5.0), 5.0, material)
 
 func generate_city_outline(city_center : Vector2, min_sides : int, max_sides : int, radius : float) -> CustomPolygon2D:
 	var polygon : CustomPolygon2D = CustomPolygon2D.new_regular_polygon(city_center, randi_range(min_sides, max_sides), radius)
@@ -129,7 +167,7 @@ func find_split_line(polygon : CustomPolygon2D) -> FiniteLine2D:
 func split_polygon_into_grid(polygon : CustomPolygon2D, grid_size : Vector2) -> Array:
 	
 	var longest_edge_index : int = polygon.get_longest_line_index()
-	var angle = polygon.edges[longest_edge_index].angle()
+	var angle = polygon.edges[longest_edge_index].get_angle()
 	var bounding_box_center : Vector2 = polygon.get_bounding_box_center()
 	var rotated_polygon : CustomPolygon2D = polygon.rotate_around_point(bounding_box_center, -angle)
 	var rotated_bounding_box : Vector4 = rotated_polygon.bounding_box
@@ -238,20 +276,17 @@ func triangluate_polygon(polygon : CustomPolygon2D, height : float, current_vert
 			
 	return current_vertices
 
-func polygon_to_mesh(polygon : CustomPolygon2D):
+func polygon_to_mesh(polygon : CustomPolygon2D, height : float, material : StandardMaterial3D):
 	
 	var mesh : ArrayMesh = ArrayMesh.new()
 	
-	var x : float = pow(randf(), 10.0)
-	var prism = generate_prism_mesh_from_polygon(polygon, (x * 450.0) + 10.0)
+	var prism = generate_prism_mesh_from_polygon(polygon, height)
 	
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, prism)
 	
 	var mesh_instance : MeshInstance3D = MeshInstance3D.new()
 	mesh_instance.mesh = mesh
 	
-	var material : StandardMaterial3D = StandardMaterial3D.new()
-	material.albedo_color = Color(randf(), randf(), randf())
 	mesh_instance.set_surface_override_material(0, material)
 	
 	var static_body : StaticBody3D = StaticBody3D.new()

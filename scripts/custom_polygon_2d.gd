@@ -120,7 +120,7 @@ func is_line_intersecting_detailed(line : FiniteLine2D) -> Dictionary:
 
 func is_point_inside(point : Vector2) -> bool:
 	# todo: use the bounding box instead of 0 here
-	var intersections = is_line_intersecting(FiniteLine2D.new(Vector2(bounding_box.x + 1000.0, point.y), point))
+	var intersections = is_line_intersecting(FiniteLine2D.new(Vector2(bounding_box.x + 100000.0, point.y), point))
 	return intersections.size() % 2 != 0
 
 func rotate_around_point(point : Vector2, angle : float) -> CustomPolygon2D:
@@ -244,7 +244,7 @@ func shrink(amount : float) -> CustomPolygon2D:
 	var bisectors : Array = []
 	
 	for edge in edges:
-		var angle : float = edge.angle()
+		var angle : float = edge.get_angle()
 		var rotated_end = (edge.end - edge.start).rotated(-angle) + edge.start
 		# todo: extend this by some calculated value like the hypot of the bounding box
 		var bisector : FiniteLine2D = FiniteLine2D.new(edge.start + Vector2(-10000.0, amount), rotated_end + Vector2(10000.0, amount))
