@@ -1,7 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://defwdd5hr4ugp"]
+[gd_scene load_steps=8 format=3 uid="uid://defwdd5hr4ugp"]
 
 [ext_resource type="Script" path="res://scripts/jet_level.gd" id="1_nmm6f"]
-[ext_resource type="PackedScene" uid="uid://criwf5ris0fki" path="res://scenes/car.tscn" id="2_h2pn6"]
 [ext_resource type="PackedScene" uid="uid://dnbrxohb5kkad" path="res://scenes/jet.tscn" id="4_ncv48"]
 [ext_resource type="Script" path="res://scripts/procedural_generation.gd" id="5_nqdlu"]
 
@@ -44,10 +43,6 @@ shape = SubResource("WorldBoundaryShape3D_a0wkh")
 
 [node name="city" type="Node3D" parent="."]
 script = ExtResource("5_nqdlu")
-
-[node name="car" parent="." node_paths=PackedStringArray("level") instance=ExtResource("2_h2pn6")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 5.5, 0)
-level = NodePath("..")
 
 [node name="jet" parent="." node_paths=PackedStringArray("level") instance=ExtResource("4_ncv48")]
 level = NodePath("..")

@@ -11,14 +11,8 @@ class_name Jet extends RigidBody3D
 @export var yaw_sensitivity : float = 100.0
 @export var roll_sensitivity : float = 100.0
 
-var bullet_template : PackedScene = preload("res://scenes/bullet.tscn")
-var shoot_cooldown : float = 0.1
-var shoot_timer : float = 0.0
-
 @onready var camera : Camera3D = level.jet_camera
 @onready var camera_offset = camera.global_position - global_position
-
-var show_radar : bool = false
 
 func apply_gravity(delta : float) -> void:
 	apply_force(gravity * mass)
@@ -46,11 +40,6 @@ func get_drag_coefficient(angle_of_attack_in_radians : float) -> float:
 func get_lift_coefficient(angle_of_attack_in_radians : float) -> float:
 	return sin(angle_of_attack_in_radians * 0.5 * PI / stall_angle_in_radians) * max_lift_coefficient
 
-func _process(_delta):
-	
-	if Input.is_action_just_released("face_button_left"):
-		show_radar = !show_radar
-
 func _physics_process(delta):
 	
 	var dynamic_pressure = get_dynamic_pressure()
@@ -74,28 +63,3 @@ func _physics_process(delta):
 	
 	camera.quaternion = camera.quaternion.slerp(quaternion, 0.05)
 	camera.global_position = global_position + (camera.basis * Vector3(0.0, 10.0, 50.0))
-	
-	var space_state = get_world_3d().direct_space_state
-	var query = PhysicsRayQueryParameters3D.create(global_position - (basis.z * 10.1), global_position - (basis.z * 1010))
-	var result = space_state.intersect_ray(query)
-	
-	if !show_radar:
-		
-		$pointer.show()
-		
-		if result:
-			$pointer.global_position = result.position
-		else:
-			$pointer.global_position = global_position - (basis.z * 110)
-		
-		if Input.is_action_pressed("face_button_bottom"):
-			if shoot_timer > 0.0:
-				shoot_timer -= delta
-			else:
-				var bullet_instance : Bullet = bullet_template.instantiate()
-				bullet_instance.start_position = global_position - (basis.z * 10.1)
-				bullet_instance.direction = -basis.z
-				get_tree().get_root().add_child(bullet_instance)
-				shoot_timer = shoot_cooldown
-	else:
-		$pointer.hide()

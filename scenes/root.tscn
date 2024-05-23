@@ -1,61 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://fi170282iqqg"]
+[gd_scene load_steps=3 format=3 uid="uid://fi170282iqqg"]
 
 [ext_resource type="Script" path="res://scripts/root.gd" id="1_e6yab"]
 [ext_resource type="PackedScene" uid="uid://defwdd5hr4ugp" path="res://scenes/level.tscn" id="2_2wuuv"]
-[ext_resource type="Script" path="res://scripts/jet_hud.gd" id="3_shd35"]
 
 [node name="root" type="Node"]
 process_mode = 3
 script = ExtResource("1_e6yab")
 
-[node name="level" parent="." node_paths=PackedStringArray("jet_camera", "car_camera") instance=ExtResource("2_2wuuv")]
+[node name="level" parent="." node_paths=PackedStringArray("jet_camera") instance=ExtResource("2_2wuuv")]
 process_mode = 1
-jet_camera = NodePath("../left_sub_viewport_container/left_sub_viewport/left_camera")
-car_camera = NodePath("../right_sub_viewport_container/right_sub_viewport/right_camera")
+jet_camera = NodePath("../left_camera")
 
-[node name="left_sub_viewport_container" type="SubViewportContainer" parent="." node_paths=PackedStringArray("level")]
-process_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -540.0
-offset_right = 960.0
-offset_bottom = 540.0
-grow_vertical = 2
-script = ExtResource("3_shd35")
-level = NodePath("../level")
-
-[node name="left_sub_viewport" type="SubViewport" parent="left_sub_viewport_container"]
-handle_input_locally = false
-msaa_3d = 2
-size = Vector2i(960, 1080)
-render_target_update_mode = 4
-
-[node name="left_camera" type="Camera3D" parent="left_sub_viewport_container/left_sub_viewport"]
+[node name="left_camera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 50)
 far = 10000.0
-
-[node name="right_sub_viewport_container" type="SubViewportContainer" parent="."]
-process_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -960.0
-offset_top = -540.0
-offset_bottom = 540.0
-grow_horizontal = 0
-grow_vertical = 2
-
-[node name="right_sub_viewport" type="SubViewport" parent="right_sub_viewport_container"]
-handle_input_locally = false
-msaa_3d = 2
-size = Vector2i(960, 1080)
-render_target_update_mode = 4
-
-[node name="right_camera" type="Camera3D" parent="right_sub_viewport_container/right_sub_viewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.95769, 5006.96)
 
 [node name="pause_menu" type="Panel" parent="."]
 process_mode = 3
@@ -91,26 +49,6 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 text = "Quit to desktop"
-
-[node name="MarginContainer" type="MarginContainer" parent="."]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -25.0
-offset_right = 25.0
-offset_bottom = 40.0
-grow_horizontal = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
-
-[node name="fps_counter" type="Label" parent="MarginContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "60 FPS"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [connection signal="pressed" from="pause_menu/vertical_box_container/button_resume" to="." method="_on_button_resume_pressed"]
 [connection signal="pressed" from="pause_menu/vertical_box_container/button_quit" to="." method="_on_button_quit_pressed"]
