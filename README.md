@@ -1,24 +1,6 @@
-# Car v Jet
+# Procedural City Generation & Basic Flight Simulation
 
-## TODO (eventually):
+A demo in Godot where you can fly around a non-grid based procedural city, generated at runtime, using a basic single airfoil simulation.
 
-Jet:
-- [x] Basic controls (roll, pitch, yaw, thrust, shoot)
-- [ ] Camera control + recentering
-- [x] Basic physics (lift, drag, thrust, gravity)
-- [ ] verify stall angle works
-- [ ] Crashing
-- [x] Basic shooting
-- [ ] Bullets need to check an explosion radius on impact
-- [ ] Nearby explosions should push the car around, not apply too much damage
-- [x] Basic HUD (target reticule)
-- [ ] Horizon indicator
-
-Environment:
-- [ ] Roads
-- [ ] Buildings
-
-Misc
-- [ ] Music
-- [ ] HUD overhaul
-- [ ] Menus (main menu, pause menu, setting menu)
+![Screenshot from 2024-08-28 09-11-13](https://github.com/user-attachments/assets/de283395-86be-494a-b00c-a3668058564c)
+![Screenshot from 2024-08-28 09-11-37](https://github.com/user-attachments/assets/9afabf8a-18d4-4d46-9c3f-592e5c4e3ed9)
